@@ -25,7 +25,6 @@ class UserManager {
 	static getUser() {
 		return UserManager.#user || {"id": "100332899133648192870"};
 	}
-
 }
 
 class API {
