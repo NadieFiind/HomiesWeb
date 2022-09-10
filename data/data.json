@@ -1,20 +1,15 @@
 {
 	"people": {
-		"100082562093592": {
+		"100332899133648192870": {
+			"name": "Nadie Fiind",
+			"connections": []
+		},
+		"111597899591355789321": {
 			"name": "Carlo Infante",
 			"connections": [
 				{
-					"id": "100041043181310",
-					"closeness": 10
-				}
-			]
-		},
-		"100041043181310": {
-			"name": "Kyla Franchezka Morcillos",
-			"connections": [
-				{
-					"id": "100082562093592",
-					"closeness": 10
+					"id": "100332899133648192870",
+					"closeness": 1
 				}
 			]
 		}

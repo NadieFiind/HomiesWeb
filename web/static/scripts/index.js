@@ -1,7 +1,7 @@
-/* global API, ForceGraph */
+/* global API, UserManager, ForceGraph */
 
 const createUniverse = async function createUniverse() {
-	const user = await API.login();
+	const user = UserManager.getUser();
 	const person = await API.getPerson(user.id);
 	const graphData = {
 		"nodes": person ? [
@@ -35,4 +35,5 @@ const createUniverse = async function createUniverse() {
 	}
 };
 
+UserManager.listenToUserChanges(createUniverse);
 createUniverse();
