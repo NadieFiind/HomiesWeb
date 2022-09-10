@@ -10,6 +10,7 @@ app = "python run.py"
 flask = "*"
 flask-restful = "*"
 gunicorn = "*"
+python-facebook-api = "*"
 
 [dev-packages]
 

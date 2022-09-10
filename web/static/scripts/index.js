@@ -1,11 +1,12 @@
-/* global getPerson, ForceGraph */
+/* global API, ForceGraph */
 
-const renderUniverse = async function renderUniverse(personId) {
-	const person = await getPerson(personId);
+const createUniverse = async function createUniverse() {
+	const user = await API.login();
+	const person = await API.getPerson(user.id);
 	const graphData = {
 		"nodes": person ? [
 			{
-				"id": personId,
+				"id": user.id,
 				"name": person.name,
 				"color": "green"
 			}
@@ -17,7 +18,7 @@ const renderUniverse = async function renderUniverse(personId) {
 
 	if (person) {
 		for (const connection of person.connections) {
-			const cperson = await getPerson(connection.id);
+			const cperson = await API.getPerson(connection.id);
 
 			graphData.nodes.push({
 				"id": connection.id,
@@ -25,7 +26,7 @@ const renderUniverse = async function renderUniverse(personId) {
 				"val": connection.closeness
 			});
 			graphData.links.push({
-				"source": personId,
+				"source": user.id,
 				"target": connection.id
 			});
 
@@ -34,4 +35,4 @@ const renderUniverse = async function renderUniverse(personId) {
 	}
 };
 
-renderUniverse("100082562093592");
+createUniverse();
