@@ -30,9 +30,9 @@
 		<meta name="twitter:creator" content="" />
 		 -->
 		<link rel="canonical" href="homiesweb.fun" />
-		<link rel="icon" href="" />
+		<link rel="icon" href="{{ url_for('static', filename='images/Homies Web Logo.png') }}" />
 		
-		<script src="{{ url_for('static', filename='scripts/base.js') }}" defer="defer"></script>
+		<script src="{{ url_for('static', filename='scripts/base.js') }}"></script>
 		{% filter indent(width="		") %}{% block head %}{% endblock head %}{% endfilter %}
 	</head>
 	<body>
