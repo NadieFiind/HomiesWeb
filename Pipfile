@@ -9,6 +9,7 @@ app = "python run.py"
 [packages]
 flask = "*"
 flask-restful = "*"
+gunicorn = "*"
 
 [dev-packages]
 
