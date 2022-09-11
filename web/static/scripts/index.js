@@ -81,3 +81,8 @@ addHomieForm.querySelector("button").addEventListener("click", () => {
 	const personId = addHomieForm.querySelector("[name='person-id']").value;
 	UserManager.addHomie(personId);
 });
+
+document.querySelector(".uid-copy-btn").addEventListener("click", () => {
+	const uid = document.querySelector(".uid");
+	navigator.clipboard.writeText(uid.textContent);
+});

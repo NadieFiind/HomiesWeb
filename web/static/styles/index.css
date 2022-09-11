@@ -16,7 +16,7 @@ button:focus {
 
 .top-panel {
 	width: 100vw;
-	height: 170px;
+	height: 188px;
 	background-color: #0a0d11;
 	color: white;
 	font-size: 1.1rem;
@@ -33,7 +33,7 @@ button:focus {
 
 .uid {
 	color: #FF3131;
-	margin: 0 10px 0 10px;
+	margin: 10px 10px 0 0;
 }
 
 .add-homie-form input {
@@ -54,13 +54,22 @@ button:focus {
 .graph {
 	position: fixed;
 	width: 100vw;
-	height: calc(100vh - 170px);
+	height: calc(100vh - 188px);
 	margin: auto;
 }
 
 @media (min-width: 768px) {
 	.top-panel {
-		height: 80px;
+		height: 77px;
+	}
+	
+	.user-info br {
+		display: none;
+	}
+	
+	.uid {
+		color: #FF3131;
+		margin: 0 10px 0 10px;
 	}
 	
 	.add-homie-form br {
@@ -76,6 +85,6 @@ button:focus {
 	}
 	
 	.graph {
-		height: calc(100vh - 80px);
+		height: calc(100vh - 77px);
 	}
 }
