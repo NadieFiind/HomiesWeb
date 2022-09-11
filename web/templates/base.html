@@ -32,10 +32,17 @@
 		<link rel="canonical" href="homiesweb.fun" />
 		<link rel="icon" href="{{ url_for('static', filename='images/Homies Web Logo.png') }}" />
 		
+		<script src="{{ url_for('static', filename='libs/jwt-decode.js') }}"></script>
 		<script src="{{ url_for('static', filename='scripts/base.js') }}"></script>
 		{% filter indent(width="		") %}{% block head %}{% endblock head %}{% endfilter %}
 	</head>
 	<body>
 		{% filter indent(width="		") %}{% block body %}{% endblock body %}{% endfilter %}
+		
+		<script>/* eslint-disable */
+			if (sessionStorage.getItem("jwt") !== null) {
+				UserManager.setUserFromJwt(sessionStorage.getItem("jwt"));
+			}
+		</script>
 	</body>
 </html>

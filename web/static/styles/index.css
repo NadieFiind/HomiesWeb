@@ -4,6 +4,7 @@ body {
 }
 
 .graph {
-	width: 100vw;
-	height: 100vh;
+	width: 40vw;
+	height: 40vw;
+	margin: auto;
 }

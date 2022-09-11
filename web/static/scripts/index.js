@@ -13,7 +13,11 @@ const createUniverse = async function createUniverse() {
 		] : [],
 		"links": []
 	};
-	const graph = new ForceGraph()(document.querySelector(".graph")).
+	const container = document.querySelector(".graph");
+	const graph = new ForceGraph()(container).
+		width(container.clientWidth).
+		height(container.clientHeight).
+		backgroundColor("#101419").
 		graphData(graphData);
 
 	if (person) {
@@ -37,3 +41,9 @@ const createUniverse = async function createUniverse() {
 
 UserManager.listenToUserChanges(createUniverse);
 createUniverse();
+
+const addHomieForm = document.querySelector(".addHomieForm");
+addHomieForm.querySelector("button").addEventListener("click", () => {
+	const personId = addHomieForm.querySelector("[name='personId']").value;
+	UserManager.addHomie(personId);
+});

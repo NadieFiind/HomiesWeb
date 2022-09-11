@@ -1,13 +1,11 @@
 from data import Database
 from typing import Any, Dict
-from data.models import Person
+from data.models import Person, Connection
 from flask import Flask, Response, request, jsonify
-
-loop = Database.client.get_io_loop()
 
 
 def get_person(person_id: str) -> Response:
-	person = loop.run_until_complete(Database.get_person(person_id))
+	person = Database.get_person(person_id)
 	
 	if person is None:
 		return Response(status=404)
@@ -17,7 +15,23 @@ def get_person(person_id: str) -> Response:
 
 def set_person() -> Response:
 	jwt: Dict[str, Any] = request.get_json()  # type: ignore[assignment]
-	loop.run_until_complete(Database.set_person(jwt["sub"], Person(jwt["name"])))
+	Database.set_person(jwt["sub"], Person(jwt["name"]))
+	return Response(status=204)
+
+
+def set_connection() -> Response:
+	data: Dict[str, Any] = request.get_json()  # type: ignore[assignment]
+	jwt: Dict[str, Any] = data["token"]
+	homie = Database.get_person(data["homieId"])
+	
+	if homie is None:
+		return Response("This person does not exist.", status=400)
+	
+	if jwt["sub"] == data["homieId"]:
+		return Response("You can't add yourself.", status=400)
+	
+	connection = Connection(jwt["sub"], data["homieId"], data["closeness"])
+	Database.set_connection(connection)
 	return Response(status=204)
 
 
@@ -28,4 +42,8 @@ def create_api(app: Flask) -> None:
 	app.add_url_rule(
 		"/api/setPerson", "set_person",
 		methods=["PUT"], view_func=set_person
+	)
+	app.add_url_rule(
+		"/api/setConnection", "set_connection",
+		methods=["PUT"], view_func=set_connection
 	)

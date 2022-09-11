@@ -1,4 +1,4 @@
-/* global window, fetch, jwt_decode */
+/* global jwt_decode */
 /* eslint-disable func-style, no-unused-vars */
 
 class API {
@@ -11,6 +11,34 @@ class API {
 
 		return res.json();
 	}
+
+	static async setPerson(decodedJwt) {
+		await fetch("/api/setPerson", {
+			"method": "PUT",
+			"headers": {"Content-Type": "application/json"},
+			"body": JSON.stringify(decodedJwt)
+		});
+	}
+
+	static async addConnection(personId) {
+		const payload = {
+			"homieId": personId,
+			"closeness": 1,
+			"token": jwt_decode(sessionStorage.getItem("jwt"))
+		};
+
+		const res = await fetch("/api/setConnection", {
+			"method": "PUT",
+			"headers": {"Content-Type": "application/json"},
+			"body": JSON.stringify(payload)
+		});
+
+		if (res.status === 204) {
+			return "Homie successfully added.";
+		}
+
+		return res.text();
+	}
 }
 
 class UserManager {
@@ -20,8 +48,13 @@ class UserManager {
 
 	static setUser(user) {
 		UserManager.#user = user;
+
 		for (const listener of UserManager.#userChangesListeners) {
 			listener();
+		}
+
+		for (const element of document.querySelectorAll(".uid")) {
+			element.textContent = user.id;
 		}
 	}
 
@@ -30,21 +63,37 @@ class UserManager {
 	}
 
 	static async setGoogleUser(credentialResponse) {
+		sessionStorage.setItem("jwt", credentialResponse.credential);
 		const decoded = jwt_decode(credentialResponse.credential);
 
 		if (await API.getPerson(decoded.sub) === null) {
-			await fetch("/api/setPerson", {
-				"method": "PUT",
-				"headers": {"Content-Type": "application/json"},
-				"body": JSON.stringify(decoded)
-			});
+			await API.setPerson(decoded);
+		}
+
+		UserManager.setUser({"id": decoded.sub});
+	}
+
+	static async setUserFromJwt(jwt) {
+		const decoded = jwt_decode(jwt);
+
+		if (await API.getPerson(decoded.sub) === null) {
+			await API.setPerson(decoded);
 		}
 
 		UserManager.setUser({"id": decoded.sub});
 	}
 
 	static getUser() {
-		return UserManager.#user || {"id": "100332899133648192870"};
+		return UserManager.#user || {"id": null};
+	}
+
+	static async addHomie(personId) {
+		if (sessionStorage.getItem("jwt") === null) {
+			document.querySelector(".server-message").textContent = "Please login first.";
+		} else {
+			const res = await API.addConnection(personId);
+			document.querySelector(".server-message").textContent = res;
+		}
 	}
 }
 

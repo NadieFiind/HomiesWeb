@@ -9,7 +9,6 @@ app = "python run.py"
 [packages]
 flask = "*"
 gunicorn = "*"
-motor = "*"
 pymongo = {extras = ["srv"], version = "*"}
 
 [dev-packages]

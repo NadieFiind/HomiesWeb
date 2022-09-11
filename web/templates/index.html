@@ -3,7 +3,6 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}" />
 
 <script src="https://accounts.google.com/gsi/client" async="async" defer="defer"></script>
-<script src="{{ url_for('static', filename='libs/jwt-decode.js') }}" defer="defer"></script>
 <script src="{{ url_for('static', filename='libs/force-graph.min.js') }}" defer="defer"></script>
 <script src="{{ url_for('static', filename='scripts/index.js') }}" defer="defer"></script>
 {% endblock head %}
@@ -13,5 +12,15 @@
 	data-client_id="839918008863-3epf75evpkjl2icbthhvtfh8j73bjht7.apps.googleusercontent.com"
 	data-callback="setGoogleUser"
 ></div>
+
+<div class="server-message"></div>
+
+<div>UID: <span class="uid">Sign in to Google</span></div>
+<form class="addHomieForm" onsubmit="return false;">
+	<label for="personId">Add a homie:</label>
+	<input type="text" name="personId" placeholder="UID" />
+	<button>Add</button>
+</form> 
+
 <div class="graph"></div>
 {% endblock body %}
