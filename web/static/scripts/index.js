@@ -23,13 +23,12 @@ const expandGraph = async function expandGraph(personId, graph, graphData, degre
 		if (!(cid in nodes)) {
 			nodes[cid] = node;
 			graphData.nodes.push(node);
-			graphData.links.push({
-				"source": personId,
-				"target": cid
-			});
-
 		}
 
+		graphData.links.push({
+			"source": personId,
+			"target": cid
+		});
 		graph.graphData(graphData);
 	}
 
