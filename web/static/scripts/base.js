@@ -4,8 +4,12 @@
 class API {
 	static async getPerson(id) {
 		const res = await fetch(`/api/${id}`);
-		const data = await res.json();
-		return data;
+
+		if (res.status === 404) {
+			return null;
+		}
+
+		return res.json();
 	}
 }
 

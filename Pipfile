@@ -8,8 +8,9 @@ app = "python run.py"
 
 [packages]
 flask = "*"
-flask-restful = "*"
 gunicorn = "*"
+motor = "*"
+pymongo = {extras = ["srv"], version = "*"}
 
 [dev-packages]
 
