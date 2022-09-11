@@ -1,10 +1,81 @@
-body {
+body, div {
 	margin: 0;
 	padding: 0;
+	max-width: 100%;
+	font-family: Helvetica, Arial;
+}
+
+button {
+	border: none;
+	font-size: 1rem;
+	transition: ease 0.2s;
+}
+button:focus {
+	background-color: #aaacad;
+}
+
+.top-panel {
+	width: 100vw;
+	height: 170px;
+	background-color: #0a0d11;
+	color: white;
+	font-size: 1.1rem;
+}
+
+.user-info {
+	margin-right: 20px;
+}
+
+.user-info, .add-homie-form {
+	display: inline-block;
+	padding: 10px;
+}
+
+.uid {
+	color: #FF3131;
+	margin: 0 10px 0 10px;
+}
+
+.add-homie-form input {
+	margin: 10px 10px 10px 0;
+	color: white;
+	background-color: transparent;
+	border: 1px solid #565656;
+	border-radius: 2px;
+}
+.add-homie-form input:focus {
+	outline-color: #205c85;
+}
+
+.server-message {
+	margin-left: 30px;
 }
 
 .graph {
-	width: 40vw;
-	height: 40vw;
+	position: fixed;
+	width: 100vw;
+	height: calc(100vh - 170px);
 	margin: auto;
+}
+
+@media (min-width: 768px) {
+	.top-panel {
+		height: 80px;
+	}
+	
+	.add-homie-form br {
+		display: none;
+	}
+	
+	.add-homie-form input {
+		margin: 0 10px 0 10px;
+	}
+	
+	.server-message {
+		margin-left: 20px;
+	}
+	
+	.graph {
+		height: calc(100vh - 80px);
+	}
 }

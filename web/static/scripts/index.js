@@ -27,7 +27,8 @@ const expandGraph = async function expandGraph(personId, graph, graphData, degre
 
 		graphData.links.push({
 			"source": personId,
-			"target": cid
+			"target": cid,
+			"color": "white"
 		});
 		graph.graphData(graphData);
 	}
@@ -63,7 +64,7 @@ const createUniverse = async function createUniverse() {
 	const graph = new ForceGraph()(container).
 		width(container.clientWidth).
 		height(container.clientHeight).
-		backgroundColor("#a19b95").
+		backgroundColor("#0b0d18").
 		graphData(graphData);
 
 	if (person) {
@@ -75,8 +76,8 @@ const createUniverse = async function createUniverse() {
 UserManager.listenToUserChanges(createUniverse);
 createUniverse();
 
-const addHomieForm = document.querySelector(".addHomieForm");
+const addHomieForm = document.querySelector(".add-homie-form");
 addHomieForm.querySelector("button").addEventListener("click", () => {
-	const personId = addHomieForm.querySelector("[name='personId']").value;
+	const personId = addHomieForm.querySelector("[name='person-id']").value;
 	UserManager.addHomie(personId);
 });

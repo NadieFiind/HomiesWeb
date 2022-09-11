@@ -13,14 +13,19 @@
 	data-callback="setGoogleUser"
 ></div>
 
-<div class="server-message"></div>
-
-<div>UID: <span class="uid">Sign in to Google</span></div>
-<form class="addHomieForm" onsubmit="return false;">
-	<label for="personId">Add a homie:</label>
-	<input type="text" name="personId" placeholder="UID" />
-	<button>Add</button>
-</form> 
+<div class="top-panel">
+	<div class="user-info">
+		UID <code class="uid">Sign in to Google</code>
+		<button>Copy</button>
+	</div>
+	<form class="add-homie-form" onsubmit="return false;">
+		<label for="person-id">Add a Homie</label><br />
+		<input type="text" name="person-id" placeholder="UID" />
+		<button>Add</button>
+	</form>
+	
+	<div class="server-message"></div>
+</div>
 
 <div class="graph"></div>
 {% endblock body %}
