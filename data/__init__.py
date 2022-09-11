@@ -1,7 +1,7 @@
 import os
 from pymongo import MongoClient
-from typing import Optional, Dict, Any
 from data.models import Person, Connection
+from typing import Optional, Dict, Any, List
 
 
 class Database:
@@ -46,3 +46,22 @@ class Database:
 		collection.find_one_and_replace(
 			{"_id": data["_id"]}, connection.toJSON()
 		)
+	
+	@staticmethod
+	def get_connections(person_id: str) -> List[Connection]:
+		collection = Database._database.get_collection("connections")
+		c1 = collection.find({"person1_id": person_id})
+		c2 = collection.find({"person2_id": person_id})
+		connections = []
+		
+		for data in c1:
+			connections.append(Connection(
+				data["person1_id"], data["person2_id"], data["closeness"]
+			))
+		
+		for data in c2:
+			connections.append(Connection(
+				data["person1_id"], data["person2_id"], data["closeness"]
+			))
+		
+		return connections

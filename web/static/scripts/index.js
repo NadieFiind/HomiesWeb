@@ -17,21 +17,29 @@ const createUniverse = async function createUniverse() {
 	const graph = new ForceGraph()(container).
 		width(container.clientWidth).
 		height(container.clientHeight).
-		backgroundColor("#101419").
+		backgroundColor("#a19b95").
 		graphData(graphData);
+	const connections = await API.getConnections(user.id);
 
 	if (person) {
-		for (const connection of person.connections) {
-			const cperson = await API.getPerson(connection.id);
+		for (const connection of connections) {
+			let cid = null;
+			if (connection.person1_id === user.id) {
+				cid = connection.person2_id;
+			} else {
+				cid = connection.person1_id;
+			}
+
+			const cperson = await API.getPerson(cid);
 
 			graphData.nodes.push({
-				"id": connection.id,
+				"id": cid,
 				"name": cperson.name,
 				"val": connection.closeness
 			});
 			graphData.links.push({
 				"source": user.id,
-				"target": connection.id
+				"target": cid
 			});
 
 			graph.graphData(graphData);

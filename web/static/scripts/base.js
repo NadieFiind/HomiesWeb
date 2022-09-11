@@ -2,14 +2,20 @@
 /* eslint-disable func-style, no-unused-vars */
 
 class API {
-	static async getPerson(id) {
-		const res = await fetch(`/api/${id}`);
+	static async getPerson(personId) {
+		const res = await fetch(`/api/${personId}`);
 
 		if (res.status === 404) {
 			return null;
 		}
 
 		return res.json();
+	}
+
+	static async getConnections(personId) {
+		const res = await fetch(`/api/${personId}/connections`);
+		const data = await res.json();
+		return data.connections;
 	}
 
 	static async setPerson(decodedJwt) {

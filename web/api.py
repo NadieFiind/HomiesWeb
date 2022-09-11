@@ -35,6 +35,14 @@ def set_connection() -> Response:
 	return Response(status=204)
 
 
+def get_connections(person_id: str) -> Response:
+	connections = Database.get_connections(person_id)
+	return jsonify({
+		"requester": person_id,
+		"connections": [c.toJSON() for c in connections]
+	})
+
+
 def create_api(app: Flask) -> None:
 	app.add_url_rule(
 		"/api/<string:person_id>", "get_person", view_func=get_person
@@ -46,4 +54,8 @@ def create_api(app: Flask) -> None:
 	app.add_url_rule(
 		"/api/setConnection", "set_connection",
 		methods=["PUT"], view_func=set_connection
+	)
+	app.add_url_rule(
+		"/api/<string:person_id>/connections", "get_connections",
+		view_func=get_connections
 	)
