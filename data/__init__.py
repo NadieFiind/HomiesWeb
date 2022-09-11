@@ -51,4 +51,4 @@ class Database:
 		Database.data["people"][person_id] = data.toJSON()
 		
 		with open("data/data.json", "w") as file:
-			json.dump(Database.data, file)
+			json.dump(Database.data, file, indent="\t")

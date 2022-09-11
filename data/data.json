@@ -6,12 +6,7 @@
 		},
 		"111597899591355789321": {
 			"name": "Carlo Infante",
-			"connections": [
-				{
-					"id": "100332899133648192870",
-					"closeness": 1
-				}
-			]
+			"connections": []
 		}
 	}
 }
