@@ -1,16 +1,63 @@
 /* global API, UserManager, ForceGraph */
 
+let nodes = {};
+
+const expandGraph = async function expandGraph(personId, graph, graphData, degree) {
+	const connections = await API.getConnections(personId);
+
+	for (const connection of connections) {
+		let cid = null;
+		if (connection.person1_id === personId) {
+			cid = connection.person2_id;
+		} else {
+			cid = connection.person1_id;
+		}
+
+		const cperson = await API.getPerson(cid);
+		const node = {
+			"id": cid,
+			"name": cperson.name,
+			"val": connection.closeness
+		};
+
+		if (!(cid in nodes)) {
+			nodes[cid] = node;
+			graphData.nodes.push(node);
+			graphData.links.push({
+				"source": personId,
+				"target": cid
+			});
+
+		}
+
+		graph.graphData(graphData);
+	}
+
+	if (degree - 1 > 0) {
+		for (const connection of connections) {
+			let cid = null;
+			if (connection.person1_id === personId) {
+				cid = connection.person2_id;
+			} else {
+				cid = connection.person1_id;
+			}
+
+			await expandGraph(cid, graph, graphData, degree - 1);
+		}
+	}
+};
+
 const createUniverse = async function createUniverse() {
+	nodes = {};
 	const user = UserManager.getUser();
 	const person = await API.getPerson(user.id);
+	const node = person ? {
+		"id": user.id,
+		"name": person.name,
+		"color": "green"
+	} : {};
 	const graphData = {
-		"nodes": person ? [
-			{
-				"id": user.id,
-				"name": person.name,
-				"color": "green"
-			}
-		] : [],
+		"nodes": person ? [node] : [],
 		"links": []
 	};
 	const container = document.querySelector(".graph");
@@ -19,31 +66,10 @@ const createUniverse = async function createUniverse() {
 		height(container.clientHeight).
 		backgroundColor("#a19b95").
 		graphData(graphData);
-	const connections = await API.getConnections(user.id);
 
 	if (person) {
-		for (const connection of connections) {
-			let cid = null;
-			if (connection.person1_id === user.id) {
-				cid = connection.person2_id;
-			} else {
-				cid = connection.person1_id;
-			}
-
-			const cperson = await API.getPerson(cid);
-
-			graphData.nodes.push({
-				"id": cid,
-				"name": cperson.name,
-				"val": connection.closeness
-			});
-			graphData.links.push({
-				"source": user.id,
-				"target": cid
-			});
-
-			graph.graphData(graphData);
-		}
+		nodes[user.id] = node;
+		expandGraph(user.id, graph, graphData, 2);
 	}
 };
 
