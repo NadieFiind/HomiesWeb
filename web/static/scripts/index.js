@@ -1,4 +1,4 @@
-/* global API, UserManager, ForceGraph */
+/* global API, UserManager, ForceGraph, popupMessage */
 
 const maxPeople = 1000;
 let nodes = {};
@@ -79,7 +79,7 @@ const createUniverse = async function createUniverse() {
 	const graph = new ForceGraph()(container).
 		width(container.clientWidth).
 		height(container.clientHeight).
-		backgroundColor("#0b0d18").
+		backgroundColor("#18181b").
 		graphData(graphData);
 
 	if (person) {
@@ -96,13 +96,34 @@ const createUniverse = async function createUniverse() {
 UserManager.listenToUserChanges(createUniverse);
 createUniverse();
 
+document.querySelector(".uid").addEventListener("click", () => {
+	const uid = document.querySelector(".uid");
+	navigator.clipboard.writeText(uid.textContent);
+	popupMessage("Copied to clipboard.");
+});
+
+const togglePanels = (panel) => {
+	for (const elem of document.querySelectorAll(".panel")) {
+		if (elem === panel) {
+			panel.classList.toggle("active");
+		} else {
+			elem.classList.remove("active");
+		}
+	}
+};
+
+document.querySelector(".show-user-info-panel-btn").addEventListener("click", () => {
+	const userInfoPanel = document.querySelector(".user-info-panel");
+	togglePanels(userInfoPanel);
+});
+
+document.querySelector(".show-homies-info-panel-btn").addEventListener("click", () => {
+	const homiesInfoPanel = document.querySelector(".homies-info-panel");
+	togglePanels(homiesInfoPanel);
+});
+
 const addHomieForm = document.querySelector(".add-homie-form");
 addHomieForm.querySelector("button").addEventListener("click", () => {
 	const personId = addHomieForm.querySelector("[name='person-id']").value;
 	UserManager.addHomie(personId);
-});
-
-document.querySelector(".uid-copy-btn").addEventListener("click", () => {
-	const uid = document.querySelector(".uid");
-	navigator.clipboard.writeText(uid.textContent);
 });

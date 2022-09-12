@@ -1,6 +1,13 @@
 /* global jwt_decode */
 /* eslint-disable func-style, no-unused-vars */
 
+function popupMessage(message) {
+	const elem = document.querySelector(".popup-message");
+	elem.classList.toggle("active");
+	elem.textContent = message;
+	setTimeout(() => elem.classList.toggle("active"), 5000);
+}
+
 class API {
 	static async getPerson(personId) {
 		const res = await fetch(`/api/${personId}`);
@@ -19,11 +26,12 @@ class API {
 	}
 
 	static async setPerson(decodedJwt) {
-		await fetch("/api/setPerson", {
+		const res = await fetch("/api/setPerson", {
 			"method": "PUT",
 			"headers": {"Content-Type": "application/json"},
 			"body": JSON.stringify(decodedJwt)
 		});
+		return res.json();
 	}
 
 	static async addConnection(personId) {
@@ -52,15 +60,19 @@ class UserManager {
 
 	static #userChangesListeners = [];
 
-	static setUser(user) {
-		UserManager.#user = user;
+	static setUser(userId, userData) {
+		UserManager.#user = {"id": userId};
 
 		for (const listener of UserManager.#userChangesListeners) {
 			listener();
 		}
 
 		for (const element of document.querySelectorAll(".uid")) {
-			element.textContent = user.id;
+			element.textContent = userId;
+		}
+
+		for (const element of document.querySelectorAll(".userName")) {
+			element.textContent = userData.name;
 		}
 	}
 
@@ -71,22 +83,24 @@ class UserManager {
 	static async setGoogleUser(credentialResponse) {
 		sessionStorage.setItem("jwt", credentialResponse.credential);
 		const decoded = jwt_decode(credentialResponse.credential);
+		let user = await API.getPerson(decoded.sub);
 
-		if (await API.getPerson(decoded.sub) === null) {
-			await API.setPerson(decoded);
+		if (user === null) {
+			user = await API.setPerson(decoded);
 		}
 
-		UserManager.setUser({"id": decoded.sub});
+		UserManager.setUser(decoded.sub, user);
 	}
 
 	static async setUserFromJwt(jwt) {
 		const decoded = jwt_decode(jwt);
+		let user = await API.getPerson(decoded.sub);
 
-		if (await API.getPerson(decoded.sub) === null) {
-			await API.setPerson(decoded);
+		if (user === null) {
+			user = await API.setPerson(decoded);
 		}
 
-		UserManager.setUser({"id": decoded.sub});
+		UserManager.setUser(decoded.sub, user);
 	}
 
 	static getUser() {
@@ -95,10 +109,10 @@ class UserManager {
 
 	static async addHomie(personId) {
 		if (sessionStorage.getItem("jwt") === null) {
-			document.querySelector(".server-message").textContent = "Please login first.";
+			popupMessage("Please login first.");
 		} else {
 			const res = await API.addConnection(personId);
-			document.querySelector(".server-message").textContent = res;
+			popupMessage(res);
 		}
 	}
 }

@@ -3,88 +3,142 @@ body, div {
 	padding: 0;
 	max-width: 100%;
 	font-family: Helvetica, Arial;
+	color: white;
 }
 
-button {
+.noselect {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.button-no-style {
+	background: none;
+	color: inherit;
 	border: none;
-	font-size: 1rem;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+.floaty {
+	z-index: 1000;
+	position: fixed;
+	background-color: #000a;
+	border-radius: 10px;
+	padding: 20px;
+}
+
+.toggable {
 	transition: ease 0.2s;
+	visibility: hidden;
+	opacity: 0;
 }
-button:focus {
-	background-color: #aaacad;
-}
-
-.top-panel {
-	width: 100vw;
-	height: 188px;
-	background-color: #0a0d11;
-	color: white;
-	font-size: 1.1rem;
+.toggable.active {
+	visibility: visible;
+	opacity: 1;
 }
 
-.user-info {
-	margin-right: 20px;
+.popup-message {
+	padding: 15px;
+	border-radius: 50px;
+	transition: ease 2s;
+	visibility: hidden;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	opacity: 0;
 }
-
-.user-info, .add-homie-form {
-	display: inline-block;
-	padding: 10px;
-}
-
-.uid {
-	color: #FF3131;
-	margin: 10px 10px 0 0;
-}
-
-.add-homie-form input {
-	margin: 10px 10px 10px 0;
-	color: white;
-	background-color: transparent;
-	border: 1px solid #565656;
-	border-radius: 2px;
-}
-.add-homie-form input:focus {
-	outline-color: #205c85;
-}
-
-.server-message {
-	margin-left: 30px;
+.popup-message.active {
+	transition: none;
+	visibility: visible;
+	opacity: 1;
 }
 
 .graph {
 	position: fixed;
 	width: 100vw;
-	height: calc(100vh - 188px);
-	margin: auto;
+	height: 100vh;
+}
+
+.user-info-panel, .homies-info-panel {
+	width: calc(90% - 20px * 2);
+	margin-top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.user-info-panel span {
+	color: #fffa;
+}
+
+.user-info-panel > div:not(:first-child) {
+	margin-top: 10px;
+}
+
+.uid, .userName {
+	float: right;
+	color: white !important;
+}
+
+.uid {
+	color: #bc0000 !important;
+}
+
+.buttons-panel {
+	right: 0;
+	bottom: 0;
+	border-radius: 0;
+	padding: 7px;
+}
+
+.buttons-panel > div {
+	height: 40px;
+}
+.buttons-panel > div:active {
+	background-color: #fffa;
+}
+
+.buttons-panel > div > i {
+	font-size: 40px;
+}
+
+.add-homie-form > input {
+	width: 100%;
+	height: 30px;
+	padding: 20px;
+	color: white;
+	box-sizing: border-box;
+	font-size: 1rem;
+	background: transparent;
+	outline: none;
+	border-color: #fffa;
+	border-style: solid;
+	border-radius: 15px;
+}
+
+.add-homie-form > button {
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-top: 12px;
+	font-size: 1rem;
+	border: none;
+	border-radius: 15px;
+	padding: 5px 10px;
+}
+.add-homie-form > button:active {
+	background-color: #fffa;
 }
 
 @media (min-width: 768px) {
-	.top-panel {
-		height: 77px;
-	}
-	
-	.user-info br {
-		display: none;
-	}
-	
-	.uid {
-		color: #FF3131;
-		margin: 0 10px 0 10px;
-	}
-	
-	.add-homie-form br {
-		display: none;
-	}
-	
-	.add-homie-form input {
-		margin: 0 10px 0 10px;
-	}
-	
-	.server-message {
-		margin-left: 20px;
-	}
-	
-	.graph {
-		height: calc(100vh - 77px);
+	.user-info-panel, .homies-info-panel {
+		width: 30%;
+		left: 50%;
+		transform: translateX(-50%);
 	}
 }

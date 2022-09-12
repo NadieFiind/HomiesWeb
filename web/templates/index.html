@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}" />
 
 <script src="https://accounts.google.com/gsi/client" async="async" defer="defer"></script>
@@ -12,20 +13,33 @@
 	data-client_id="839918008863-3epf75evpkjl2icbthhvtfh8j73bjht7.apps.googleusercontent.com"
 	data-callback="setGoogleUser"
 ></div>
+<div class="floaty popup-message"></div>
 
-<div class="top-panel">
-	<div class="user-info">
-		UID<br />
-		<code class="uid">Sign in to Google</code>
-		<button class="uid-copy-btn">Copy</button>
+<div class="floaty user-info-panel toggable panel">
+	<div>
+		<span>UID</span>
+		<button class="uid button-no-style">Not logged in</button>
 	</div>
+	<div>
+		<span>Name</span>
+		<span class="userName"></span>
+	</div>
+</div>
+
+<div class="floaty homies-info-panel toggable panel">
 	<form class="add-homie-form" onsubmit="return false;">
-		<label for="person-id">Add a Homie</label><br />
 		<input type="text" name="person-id" placeholder="UID" />
-		<button>Add</button>
+		<button>Add Homie</button>
 	</form>
-	
-	<div class="server-message"></div>
+</div>
+
+<div class="floaty buttons-panel">
+	<div class="show-user-info-panel-btn">
+		<i class="noselect material-icons">person</i>
+	</div>
+	<div class="show-homies-info-panel-btn">
+		<i class="noselect material-icons">person_add</i>
+	</div>
 </div>
 
 <div class="graph"></div>

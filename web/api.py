@@ -15,8 +15,9 @@ def get_person(person_id: str) -> Response:
 
 def set_person() -> Response:
 	jwt: Dict[str, Any] = request.get_json()  # type: ignore[assignment]
-	Database.set_person(jwt["sub"], Person(jwt["name"]))
-	return Response(status=204)
+	person = Person(jwt["name"])
+	Database.set_person(jwt["sub"], person)
+	return jsonify(person.toJSON())
 
 
 def set_connection() -> Response:
