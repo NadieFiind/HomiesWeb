@@ -1,8 +1,14 @@
 /* global API, UserManager, ForceGraph */
 
+const maxPeople = 1000;
 let nodes = {};
+let stopUniverseExpansion = false;
 
-const expandGraph = async function expandGraph(personId, graph, graphData, degree) {
+const expandUniverse = async function expandUniverse(personId, graph, graphData, degree) {
+	if (stopUniverseExpansion) {
+		return;
+	}
+
 	const connections = await API.getConnections(personId);
 
 	for (const connection of connections) {
@@ -31,10 +37,19 @@ const expandGraph = async function expandGraph(personId, graph, graphData, degre
 			"color": "white"
 		});
 		graph.graphData(graphData);
+
+		if (graphData.nodes.length >= maxPeople) {
+			stopUniverseExpansion = true;
+			return;
+		}
 	}
 
 	if (degree - 1 > 0) {
 		for (const connection of connections) {
+			if (stopUniverseExpansion) {
+				return;
+			}
+
 			let cid = null;
 			if (connection.person1_id === personId) {
 				cid = connection.person2_id;
@@ -42,7 +57,7 @@ const expandGraph = async function expandGraph(personId, graph, graphData, degre
 				cid = connection.person1_id;
 			}
 
-			await expandGraph(cid, graph, graphData, degree - 1);
+			await expandUniverse(cid, graph, graphData, degree - 1);
 		}
 	}
 };
@@ -69,7 +84,12 @@ const createUniverse = async function createUniverse() {
 
 	if (person) {
 		nodes[user.id] = node;
-		expandGraph(user.id, graph, graphData, 2);
+
+		if (maxPeople <= 1) {
+			stopUniverseExpansion = true;
+		}
+
+		expandUniverse(user.id, graph, graphData, 2);
 	}
 };
 
