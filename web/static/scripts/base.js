@@ -1,4 +1,3 @@
-/* global createUniverse */
 /* eslint-disable func-style, no-unused-vars */
 
 function popupMessage(message) {
@@ -103,17 +102,16 @@ class UserManager {
 	}
 
 	static async addHomie(personId) {
+		let message = "";
+
 		if (UserManager.#user.id === null) {
-			popupMessage("Please login first.");
+			message = "Please login first.";
 		} else {
 			const res = await API.addConnection(personId);
-
-			if (res === "Homie successfully added.") {
-				createUniverse();
-			}
-
-			popupMessage(res);
+			message = res;
 		}
+
+		return message;
 	}
 }
 

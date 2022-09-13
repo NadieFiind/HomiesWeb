@@ -4,6 +4,9 @@ const maxPeople = 1000;
 const homiesDegree = 3;
 let stopUniverseExpansion = false;
 
+let nodes = {};
+let links = {};
+
 const togglePanels = (panel) => {
 	for (const elem of document.querySelectorAll(".panel")) {
 		if (panel.classList.contains("panel-persistent")) {
@@ -21,7 +24,6 @@ const togglePanels = (panel) => {
 	}
 };
 
-let nodes = {};
 const container = document.querySelector(".graph");
 const graph = new ForceGraph()(container).
 	width(container.clientWidth).
@@ -33,8 +35,9 @@ const graph = new ForceGraph()(container).
 		personInfoPanel.querySelector(".person-name").textContent = node.name;
 		togglePanels(personInfoPanel);
 	});
+let graphData = {};
 
-const expandUniverse = async (personId, graphData, degree) => {
+const expandUniverse = async (personId, degree) => {
 	if (stopUniverseExpansion) {
 		return;
 	}
@@ -53,19 +56,25 @@ const expandUniverse = async (personId, graphData, degree) => {
 		const node = {
 			"id": cid,
 			"name": cperson.name,
-			"val": connection.closeness
+			"val": 1
 		};
+		const link = {
+			"source": personId,
+			"target": cid,
+			"color": "white"
+		};
+		const linkId = parseInt(personId, 10) + parseInt(cid, 10);
 
 		if (!(cid in nodes)) {
 			nodes[cid] = node;
 			graphData.nodes.push(node);
 		}
 
-		graphData.links.push({
-			"source": personId,
-			"target": cid,
-			"color": "white"
-		});
+		if (!(linkId in links)) {
+			links[linkId] = link;
+			graphData.links.push(link);
+		}
+
 		graph.graphData(graphData);
 
 		if (graphData.nodes.length >= maxPeople) {
@@ -87,13 +96,15 @@ const expandUniverse = async (personId, graphData, degree) => {
 				cid = connection.person1_id;
 			}
 
-			await expandUniverse(cid, graphData, degree - 1);
+			await expandUniverse(cid, degree - 1);
 		}
 	}
 };
 
 const createUniverse = () => {
 	nodes = {};
+	links = {};
+
 	const user = UserManager.getUser();
 	const person = user.data;
 	const node = person ? {
@@ -101,7 +112,7 @@ const createUniverse = () => {
 		"name": person.name,
 		"color": "green"
 	} : {};
-	const graphData = {
+	graphData = {
 		"nodes": person ? [node] : [],
 		"links": []
 	};
@@ -114,7 +125,7 @@ const createUniverse = () => {
 			stopUniverseExpansion = true;
 		}
 
-		expandUniverse(user.id, graphData, homiesDegree);
+		expandUniverse(user.id, homiesDegree);
 	}
 };
 
@@ -139,7 +150,23 @@ document.querySelector(".show-homies-info-panel-btn").addEventListener("click", 
 });
 
 const addHomieForm = document.querySelector(".add-homie-form");
-addHomieForm.querySelector("button").addEventListener("click", () => {
+addHomieForm.querySelector("button").addEventListener("click", async () => {
 	const personId = addHomieForm.querySelector("[name='person-id']").value;
-	UserManager.addHomie(personId);
+	const message = await UserManager.addHomie(personId);
+
+	if (message === "Homie successfully added.") {
+		const userId = UserManager.getUser().id;
+		const link = {
+			"source": userId,
+			"target": personId,
+			"color": "yellow"
+		};
+		const linkId = parseInt(userId, 10) + parseInt(personId, 10);
+
+		links[linkId] = link;
+		graphData.links.push(link);
+		graph.graphData(graphData);
+	}
+
+	popupMessage(message);
 });
