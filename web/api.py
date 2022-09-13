@@ -56,7 +56,8 @@ def set_connection() -> Response:
 	
 	connection = Connection(jwt["sub"], data["homieId"], data["closeness"])
 	Database.set_connection(connection)
-	return Response(status=204)
+	
+	return jsonify(connection.toJSON())
 
 
 def get_connections(person_id: str) -> Response:

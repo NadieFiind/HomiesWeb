@@ -51,11 +51,17 @@ class API {
 			})
 		});
 
-		if (res.status === 204) {
-			return "Homie successfully added.";
+		if (res.status === 200) {
+			return {
+				"message": "Homie successfully added.",
+				"data": await res.json()
+			};
 		}
 
-		return res.text();
+		return {
+			"message": await res.text(),
+			"data": null
+		};
 	}
 }
 
@@ -67,12 +73,49 @@ class UserManager {
 
 	static #userChangesListeners = [];
 
+	static connections = [];
+
 	static async register() {
 		const user = await API.getUser();
 
 		if (user !== null) {
+			// eslint-disable-next-line require-atomic-updates
+			UserManager.connections = await API.getConnections(user.id);
 			UserManager.setUser(user.id, user.data);
 		}
+
+		UserManager.loadHomies();
+	}
+
+	static async loadHomies() {
+		document.querySelector(".homies-list").innerHTML = "";
+		for (const connection of UserManager.connections) {
+			await UserManager.#addHomieToDOM(connection);
+		}
+	}
+
+	static async #addHomieToDOM(connection) {
+		const user = UserManager.getUser();
+		let homieId = null;
+
+		if (connection.person1_id === user.id) {
+			homieId = connection.person2_id;
+		} else {
+			homieId = connection.person1_id;
+		}
+
+		const homiesListElem = document.querySelector(".homies-list");
+		const elemContainer = document.createElement("div");
+		const homie = await API.getPerson(homieId);
+
+		elemContainer.innerHTML = `<div class="homie-info">
+			<div>
+				<span>Name</span>
+				<span class="some-value">${homie.name}</span>
+			</div>
+		</div>`;
+
+		homiesListElem.appendChild(elemContainer);
 	}
 
 	static setUser(userId, userData) {
@@ -110,12 +153,29 @@ class UserManager {
 
 	static async addHomie(personId) {
 		let message = "";
+		let connectionData = null;
 
 		if (UserManager.#user.id === null) {
 			message = "Please login first.";
 		} else {
 			const res = await API.addConnection(personId);
-			message = res;
+
+			// eslint-disable-next-line prefer-destructuring
+			message = res.message;
+			connectionData = res.data;
+		}
+
+		if (connectionData !== null) {
+			const index = UserManager.connections.findIndex((c1) => {
+				const c1Id = parseInt(c1.person1_id, 10) + parseInt(c1.person2_id, 10);
+				const c2Id = parseInt(connectionData.person1_id, 10) + parseInt(connectionData.person2_id, 10);
+				return c1Id === c2Id;
+			});
+
+			if (index === -1) {
+				UserManager.connections.push(connectionData);
+				await UserManager.#addHomieToDOM(connectionData);
+			}
 		}
 
 		return message;

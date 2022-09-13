@@ -72,7 +72,9 @@ body, div {
 	transform: translateX(-50%);
 }
 
-.user-info-panel span, .person-info-panel span {
+.user-info-panel span,
+.person-info-panel span,
+.homies-info-panel span {
 	color: #fffa;
 }
 
@@ -134,6 +136,18 @@ body, div {
 }
 .add-homie-form > button:active {
 	background-color: #fffa;
+}
+
+.homies-list-label {
+	display: inline-block;
+	margin-top: 30px;
+	margin-bottom: 3px;
+	font-weight: bold;
+	color: white !important;
+}
+
+.homie-info {
+	margin-top: 5px;
 }
 
 @media (min-width: 768px) {

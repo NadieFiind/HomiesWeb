@@ -77,7 +77,14 @@ class Universe {
 			return;
 		}
 
-		const connections = await API.getConnections(personId);
+		let connections = [];
+
+		if (personId === UserManager.getUser().id) {
+			// eslint-disable-next-line prefer-destructuring
+			connections = UserManager.connections;
+		} else {
+			connections = await API.getConnections(personId);
+		}
 
 		for (const connection of connections) {
 			let cid = null;
@@ -137,9 +144,6 @@ class Universe {
 	}
 }
 
-UserManager.listenToUserChanges(Universe.create);
-Universe.create();
-
 const copyToClipboard = (event) => {
 	navigator.clipboard.writeText(event.target.textContent);
 	popupMessage("Copied to clipboard.");
@@ -178,3 +182,6 @@ addHomieForm.querySelector("button").addEventListener("click", async () => {
 
 	popupMessage(message);
 });
+
+UserManager.listenToUserChanges(Universe.create);
+Universe.create();
