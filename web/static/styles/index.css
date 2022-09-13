@@ -29,6 +29,12 @@ a {
 	outline: inherit;
 }
 
+.g_id_signin {
+	bottom: 0;
+	z-index: 2000;
+	position: fixed;
+}
+
 .floaty {
 	z-index: 1000;
 	position: fixed;
