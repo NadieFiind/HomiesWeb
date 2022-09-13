@@ -1,3 +1,4 @@
+/* global createUniverse */
 /* eslint-disable func-style, no-unused-vars */
 
 function popupMessage(message) {
@@ -53,7 +54,10 @@ class API {
 }
 
 class UserManager {
-	static #user = {"id": null};
+	static #user = {
+		"id": null,
+		"data": null
+	};
 
 	static #userChangesListeners = [];
 
@@ -66,7 +70,10 @@ class UserManager {
 	}
 
 	static setUser(userId, userData) {
-		UserManager.#user = {"id": userId};
+		UserManager.#user = {
+			"id": userId,
+			"data": userData
+		};
 
 		for (const listener of UserManager.#userChangesListeners) {
 			listener();
@@ -100,6 +107,11 @@ class UserManager {
 			popupMessage("Please login first.");
 		} else {
 			const res = await API.addConnection(personId);
+
+			if (res === "Homie successfully added.") {
+				createUniverse();
+			}
+
 			popupMessage(res);
 		}
 	}

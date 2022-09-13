@@ -1,10 +1,40 @@
 /* global API, UserManager, ForceGraph, popupMessage */
 
 const maxPeople = 1000;
-let nodes = {};
+const homiesDegree = 3;
 let stopUniverseExpansion = false;
 
-const expandUniverse = async function expandUniverse(personId, graph, graphData, degree) {
+const togglePanels = (panel) => {
+	for (const elem of document.querySelectorAll(".panel")) {
+		if (panel.classList.contains("panel-persistent")) {
+			if (elem.classList.contains("panel-persistent")) {
+				elem.classList.add("active");
+				break;
+			}
+		}
+
+		if (elem === panel) {
+			panel.classList.toggle("active");
+		} else {
+			elem.classList.remove("active");
+		}
+	}
+};
+
+let nodes = {};
+const container = document.querySelector(".graph");
+const graph = new ForceGraph()(container).
+	width(container.clientWidth).
+	height(container.clientHeight).
+	backgroundColor("#18181b").
+	onNodeClick((node) => {
+		const personInfoPanel = document.querySelector(".person-info-panel");
+		personInfoPanel.querySelector(".person-uid").textContent = node.id;
+		personInfoPanel.querySelector(".person-name").textContent = node.name;
+		togglePanels(personInfoPanel);
+	});
+
+const expandUniverse = async (personId, graphData, degree) => {
 	if (stopUniverseExpansion) {
 		return;
 	}
@@ -57,15 +87,15 @@ const expandUniverse = async function expandUniverse(personId, graph, graphData,
 				cid = connection.person1_id;
 			}
 
-			await expandUniverse(cid, graph, graphData, degree - 1);
+			await expandUniverse(cid, graphData, degree - 1);
 		}
 	}
 };
 
-const createUniverse = async function createUniverse() {
+const createUniverse = () => {
 	nodes = {};
 	const user = UserManager.getUser();
-	const person = await API.getPerson(user.id);
+	const person = user.data;
 	const node = person ? {
 		"id": user.id,
 		"name": person.name,
@@ -75,12 +105,7 @@ const createUniverse = async function createUniverse() {
 		"nodes": person ? [node] : [],
 		"links": []
 	};
-	const container = document.querySelector(".graph");
-	const graph = new ForceGraph()(container).
-		width(container.clientWidth).
-		height(container.clientHeight).
-		backgroundColor("#18181b").
-		graphData(graphData);
+	graph.graphData(graphData);
 
 	if (person) {
 		nodes[user.id] = node;
@@ -89,28 +114,19 @@ const createUniverse = async function createUniverse() {
 			stopUniverseExpansion = true;
 		}
 
-		expandUniverse(user.id, graph, graphData, 2);
+		expandUniverse(user.id, graphData, homiesDegree);
 	}
 };
 
 UserManager.listenToUserChanges(createUniverse);
 createUniverse();
 
-document.querySelector(".uid").addEventListener("click", () => {
-	const uid = document.querySelector(".uid");
-	navigator.clipboard.writeText(uid.textContent);
+const copyUidToClipboard = (event) => {
+	navigator.clipboard.writeText(event.target.textContent);
 	popupMessage("Copied to clipboard.");
-});
-
-const togglePanels = (panel) => {
-	for (const elem of document.querySelectorAll(".panel")) {
-		if (elem === panel) {
-			panel.classList.toggle("active");
-		} else {
-			elem.classList.remove("active");
-		}
-	}
 };
+document.querySelector(".uid").addEventListener("click", copyUidToClipboard);
+document.querySelector(".person-uid").addEventListener("click", copyUidToClipboard);
 
 document.querySelector(".show-user-info-panel-btn").addEventListener("click", () => {
 	const userInfoPanel = document.querySelector(".user-info-panel");

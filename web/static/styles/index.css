@@ -65,27 +65,28 @@ body, div {
 	height: 100vh;
 }
 
-.user-info-panel, .homies-info-panel {
+.panel {
 	width: calc(90% - 20px * 2);
 	margin-top: 20px;
 	left: 50%;
 	transform: translateX(-50%);
 }
 
-.user-info-panel span {
+.user-info-panel span, .person-info-panel span {
 	color: #fffa;
 }
 
-.user-info-panel > div:not(:first-child) {
+.user-info-panel > div:not(:first-child),
+.person-info-panel > div:not(:first-child) {
 	margin-top: 10px;
 }
 
-.uid, .userName {
+.uid, .userName, .some-value, .person-uid {
 	float: right;
 	color: white !important;
 }
 
-.uid {
+.uid, .person-uid {
 	color: #bc0000 !important;
 }
 
@@ -136,7 +137,7 @@ body, div {
 }
 
 @media (min-width: 768px) {
-	.user-info-panel, .homies-info-panel {
+	.panel {
 		width: 30%;
 		left: 50%;
 		transform: translateX(-50%);
