@@ -6,6 +6,10 @@ body, div {
 	color: white;
 }
 
+a {
+	color: #4d4dc0;
+}
+
 .noselect {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;

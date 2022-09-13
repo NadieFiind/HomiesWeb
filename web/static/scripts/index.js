@@ -5,7 +5,8 @@ const togglePanels = (panel) => {
 		if (panel.classList.contains("panel-persistent")) {
 			if (elem.classList.contains("panel-persistent")) {
 				elem.classList.add("active");
-				break;
+				// eslint-disable-next-line no-continue
+				continue;
 			}
 		}
 
@@ -164,6 +165,11 @@ document.querySelector(".show-user-info-panel-btn").addEventListener("click", ()
 document.querySelector(".show-homies-info-panel-btn").addEventListener("click", () => {
 	const homiesInfoPanel = document.querySelector(".homies-info-panel");
 	togglePanels(homiesInfoPanel);
+});
+
+document.querySelector(".show-help-panel-btn").addEventListener("click", () => {
+	const helpPanel = document.querySelector(".help-panel");
+	togglePanels(helpPanel);
 });
 
 const addHomieForm = document.querySelector(".add-homie-form");
