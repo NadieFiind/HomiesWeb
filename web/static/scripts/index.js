@@ -106,18 +106,23 @@ class Universe {
 				"color": "white"
 			};
 			const linkId = parseInt(personId, 10) + parseInt(cid, 10);
+			let updateGraph = false;
 
 			if (!(cid in Universe.nodes)) {
 				Universe.nodes[cid] = node;
 				Universe.graphData.nodes.push(node);
+				updateGraph = true;
 			}
 
 			if (!(linkId in Universe.links)) {
 				Universe.links[linkId] = link;
 				Universe.graphData.links.push(link);
+				updateGraph = true;
 			}
 
-			Universe.graph.graphData(Universe.graphData);
+			if (updateGraph) {
+				Universe.graph.graphData(Universe.graphData);
+			}
 
 			if (Universe.graphData.nodes.length >= Universe.maxPopulation) {
 				Universe.stopExpansion = true;
