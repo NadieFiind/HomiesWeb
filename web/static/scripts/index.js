@@ -183,5 +183,7 @@ addHomieForm.querySelector("button").addEventListener("click", async () => {
 	popupMessage(message);
 });
 
-UserManager.listenToUserChanges(Universe.create);
-Universe.create();
+(async () => {
+	await UserManager.register();
+	Universe.create();
+})();

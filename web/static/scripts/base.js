@@ -141,10 +141,10 @@ class UserManager {
 		UserManager.#userChangesListeners.push(callback);
 	}
 
-	static async setGoogleUser(credentialResponse) {
+	static setGoogleUser(credentialResponse) {
 		const jwtString = credentialResponse.credential;
 		document.cookie = `jwt=${jwtString}; secure, httpOnly, sameSite=Strict;`;
-		await UserManager.register();
+		window.location.reload();
 	}
 
 	static getUser() {
