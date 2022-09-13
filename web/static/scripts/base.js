@@ -1,10 +1,17 @@
 /* eslint-disable func-style, no-unused-vars */
 
+let popupMessageTimeout = null;
 function popupMessage(message) {
 	const elem = document.querySelector(".popup-message");
-	elem.classList.toggle("active");
 	elem.textContent = message;
-	setTimeout(() => elem.classList.toggle("active"), 5000);
+
+	if (elem.classList.contains("active")) {
+		clearTimeout(popupMessageTimeout);
+	} else {
+		elem.classList.add("active");
+	}
+
+	popupMessageTimeout = setTimeout(() => elem.classList.remove("active"), 5000);
 }
 
 class API {
