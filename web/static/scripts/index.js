@@ -1,12 +1,5 @@
 /* global API, UserManager, ForceGraph, popupMessage */
 
-const maxPeople = 1000;
-const homiesDegree = 3;
-let stopUniverseExpansion = false;
-
-let nodes = {};
-let links = {};
-
 const togglePanels = (panel) => {
 	for (const elem of document.querySelectorAll(".panel")) {
 		if (panel.classList.contains("panel-persistent")) {
@@ -24,71 +17,69 @@ const togglePanels = (panel) => {
 	}
 };
 
-const container = document.querySelector(".graph");
-const graph = new ForceGraph()(container).
-	width(container.clientWidth).
-	height(container.clientHeight).
-	backgroundColor("#18181b").
-	onNodeClick((node) => {
-		const personInfoPanel = document.querySelector(".person-info-panel");
-		personInfoPanel.querySelector(".person-uid").textContent = node.id;
-		personInfoPanel.querySelector(".person-name").textContent = node.name;
-		togglePanels(personInfoPanel);
-	});
-let graphData = {};
+class Universe {
+	static maxPopulation = 1000;
 
-const expandUniverse = async (personId, degree) => {
-	if (stopUniverseExpansion) {
-		return;
-	}
+	static homiesDegree = 3;
 
-	const connections = await API.getConnections(personId);
+	static stopExpansion = false;
 
-	for (const connection of connections) {
-		let cid = null;
-		if (connection.person1_id === personId) {
-			cid = connection.person2_id;
-		} else {
-			cid = connection.person1_id;
-		}
+	static container = document.querySelector(".graph");
 
-		const cperson = await API.getPerson(cid);
-		const node = {
-			"id": cid,
-			"name": cperson.name,
-			"val": 1
+	static graph = new ForceGraph()(Universe.container).
+		width(Universe.container.clientWidth).
+		height(Universe.container.clientHeight).
+		backgroundColor("#18181b").
+		onNodeClick((node) => {
+			const personInfoPanel = document.querySelector(".person-info-panel");
+			personInfoPanel.querySelector(".person-uid").textContent = node.id;
+			personInfoPanel.querySelector(".person-name").textContent = node.name;
+			togglePanels(personInfoPanel);
+		});
+
+	static nodes = {};
+
+	static links = {};
+
+	static graphData = {};
+
+	static create() {
+		Universe.nodes = {};
+		Universe.links = {};
+
+		const user = UserManager.getUser();
+		const person = user.data;
+		const node = person ? {
+			"id": user.id,
+			"name": person.name,
+			"color": "green"
+		} : {};
+		Universe.graphData = {
+			"nodes": person ? [node] : [],
+			"links": []
 		};
-		const link = {
-			"source": personId,
-			"target": cid,
-			"color": "white"
-		};
-		const linkId = parseInt(personId, 10) + parseInt(cid, 10);
 
-		if (!(cid in nodes)) {
-			nodes[cid] = node;
-			graphData.nodes.push(node);
-		}
+		Universe.graph.graphData(Universe.graphData);
 
-		if (!(linkId in links)) {
-			links[linkId] = link;
-			graphData.links.push(link);
-		}
+		if (person) {
+			Universe.nodes[user.id] = node;
 
-		graph.graphData(graphData);
-
-		if (graphData.nodes.length >= maxPeople) {
-			stopUniverseExpansion = true;
-			return;
-		}
-	}
-
-	if (degree - 1 > 0) {
-		for (const connection of connections) {
-			if (stopUniverseExpansion) {
-				return;
+			if (Universe.maxPopulation <= 1) {
+				Universe.stopExpansion = true;
 			}
 
+			Universe.expand(user.id, Universe.homiesDegree);
+		}
+	}
+
+	static async expand(personId, degree) {
+		if (Universe.stopExpansion) {
+			return;
+		}
+
+		const connections = await API.getConnections(personId);
+
+		for (const connection of connections) {
 			let cid = null;
 			if (connection.person1_id === personId) {
 				cid = connection.person2_id;
@@ -96,48 +87,65 @@ const expandUniverse = async (personId, degree) => {
 				cid = connection.person1_id;
 			}
 
-			await expandUniverse(cid, degree - 1);
+			const cperson = await API.getPerson(cid);
+			const node = {
+				"id": cid,
+				"name": cperson.name,
+				"val": 1
+			};
+			const link = {
+				"source": personId,
+				"target": cid,
+				"color": "white"
+			};
+			const linkId = parseInt(personId, 10) + parseInt(cid, 10);
+
+			if (!(cid in Universe.nodes)) {
+				Universe.nodes[cid] = node;
+				Universe.graphData.nodes.push(node);
+			}
+
+			if (!(linkId in Universe.links)) {
+				Universe.links[linkId] = link;
+				Universe.graphData.links.push(link);
+			}
+
+			Universe.graph.graphData(Universe.graphData);
+
+			if (Universe.graphData.nodes.length >= Universe.maxPopulation) {
+				Universe.stopExpansion = true;
+				return;
+			}
+		}
+
+		if (degree - 1 > 0) {
+			for (const connection of connections) {
+				if (Universe.stopExpansion) {
+					return;
+				}
+
+				let cid = null;
+				if (connection.person1_id === personId) {
+					cid = connection.person2_id;
+				} else {
+					cid = connection.person1_id;
+				}
+
+				await Universe.expand(cid, degree - 1);
+			}
 		}
 	}
-};
+}
 
-const createUniverse = () => {
-	nodes = {};
-	links = {};
+UserManager.listenToUserChanges(Universe.create);
+Universe.create();
 
-	const user = UserManager.getUser();
-	const person = user.data;
-	const node = person ? {
-		"id": user.id,
-		"name": person.name,
-		"color": "green"
-	} : {};
-	graphData = {
-		"nodes": person ? [node] : [],
-		"links": []
-	};
-	graph.graphData(graphData);
-
-	if (person) {
-		nodes[user.id] = node;
-
-		if (maxPeople <= 1) {
-			stopUniverseExpansion = true;
-		}
-
-		expandUniverse(user.id, homiesDegree);
-	}
-};
-
-UserManager.listenToUserChanges(createUniverse);
-createUniverse();
-
-const copyUidToClipboard = (event) => {
+const copyToClipboard = (event) => {
 	navigator.clipboard.writeText(event.target.textContent);
 	popupMessage("Copied to clipboard.");
 };
-document.querySelector(".uid").addEventListener("click", copyUidToClipboard);
-document.querySelector(".person-uid").addEventListener("click", copyUidToClipboard);
+document.querySelector(".uid").addEventListener("click", copyToClipboard);
+document.querySelector(".person-uid").addEventListener("click", copyToClipboard);
 
 document.querySelector(".show-user-info-panel-btn").addEventListener("click", () => {
 	const userInfoPanel = document.querySelector(".user-info-panel");
@@ -163,9 +171,9 @@ addHomieForm.querySelector("button").addEventListener("click", async () => {
 		};
 		const linkId = parseInt(userId, 10) + parseInt(personId, 10);
 
-		links[linkId] = link;
-		graphData.links.push(link);
-		graph.graphData(graphData);
+		Universe.links[linkId] = link;
+		Universe.graphData.links.push(link);
+		Universe.graph.graphData(Universe.graphData);
 	}
 
 	popupMessage(message);
