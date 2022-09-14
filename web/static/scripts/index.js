@@ -58,8 +58,8 @@ addHomieForm.querySelector("button").addEventListener("click", async () => {
 	popupMessage(res.message);
 });
 
-document.querySelector(".show-homies-btn").addEventListener("click", () => {
-	const personId = document.querySelector(".person-uid").textContent;
+document.querySelector(".show-homies-btn").addEventListener("click", (event) => {
+	const personId = event.target.parentNode.parentNode.querySelector(".person-uid").textContent;
 	Universe.expand(personId);
 });
 

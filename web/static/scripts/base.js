@@ -1,3 +1,4 @@
+/* global Universe */
 /* eslint-disable func-style, no-unused-vars */
 
 let popupMessageTimeout = null;
@@ -63,6 +64,15 @@ class API {
 			"data": null
 		};
 	}
+
+	static async removeConnection(personId) {
+		const res = await fetch("/api/removeConnection", {
+			"method": "DELETE",
+			"headers": {"Content-Type": "application/json"},
+			"body": JSON.stringify({"homieId": personId})
+		});
+		return res.text();
+	}
 }
 
 class UserManager {
@@ -90,24 +100,58 @@ class UserManager {
 	static async loadHomies() {
 		document.querySelector(".homies-list").innerHTML = "";
 		for (const connection of UserManager.connections) {
-			await UserManager.#addHomieToDOM(connection);
+			const homieId = UserManager.getConnectionPerson2(connection);
+			await UserManager.#addHomieToDOM(homieId);
 		}
 	}
 
-	static async #addHomieToDOM(connection) {
-		const homieId = UserManager.getConnectionPerson2(connection);
+	static async #addHomieToDOM(homieId) {
 		const homie = await API.getPerson(homieId);
 		const homiesListElem = document.querySelector(".homies-list");
 		const elemContainer = document.createElement("div");
 
 		elemContainer.innerHTML = `<div class="homie-info">
 			<div>
+				<span>UID</span>
+				<button class="homie-uid person-uid button-no-style">${homieId}</button>
+			</div>
+			<div>
 				<span>Name</span>
 				<span class="some-value">${homie.name}</span>
+			</div>
+			<div>
+				<button class="remove-homie-btn button-styled-mini">Unhomie</button>
 			</div>
 		</div>`;
 
 		homiesListElem.appendChild(elemContainer);
+
+		elemContainer.querySelector(".remove-homie-btn").addEventListener(
+			"click",
+			async (event) => {
+				const message = await UserManager.removeHomie(homieId);
+
+				if (message === "Homie successfully removed.") {
+					Universe.graph.removeLink(UserManager.getUser().id, homieId);
+				}
+
+				popupMessage(message);
+			}
+		);
+		elemContainer.querySelector(".person-uid").addEventListener("click", (event) => {
+			navigator.clipboard.writeText(event.target.textContent);
+			popupMessage("Copied to clipboard.");
+		});
+	}
+
+	static #removeHomieToDOM(homieId) {
+		const homiesListElem = document.querySelector(".homies-list");
+
+		for (const elem of homiesListElem.querySelectorAll(".homie-uid")) {
+			if (elem.textContent === homieId) {
+				elem.parentNode.parentNode.parentNode.remove();
+			}
+		}
 	}
 
 	static setUser(userId, userData) {
@@ -166,7 +210,7 @@ class UserManager {
 
 			if (index === -1) {
 				UserManager.connections.push(connectionData);
-				await UserManager.#addHomieToDOM(connectionData);
+				await UserManager.#addHomieToDOM(personId);
 			}
 		}
 
@@ -176,6 +220,31 @@ class UserManager {
 				? await API.getPerson(UserManager.getConnectionPerson2(connectionData))
 				: null
 		};
+	}
+
+	static async removeHomie(personId) {
+		let message = "";
+
+		if (UserManager.getUser().id === null) {
+			message = "Please login first.";
+		} else {
+			message = await API.removeConnection(personId);
+		}
+
+		if (message === "Homie successfully removed.") {
+			const index = UserManager.connections.findIndex((c1) => {
+				const c1Id = parseInt(c1.person1_id, 10) + parseInt(c1.person2_id, 10);
+				const c2Id = parseInt(UserManager.getUser().id, 10) + parseInt(personId, 10);
+				return c1Id === c2Id;
+			});
+
+			if (index !== -1) {
+				UserManager.connections.splice(index, 1);
+				UserManager.#removeHomieToDOM(personId);
+			}
+		}
+
+		return message;
 	}
 
 	static getConnectionPerson2(connection, peson1Id = null) {

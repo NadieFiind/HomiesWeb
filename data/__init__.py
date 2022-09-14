@@ -48,6 +48,23 @@ class Database:
 		)
 	
 	@staticmethod
+	def remove_connection(connection: Connection) -> None:
+		collection = Database._database.get_collection("connections")
+		data: Optional[Dict[str, Any]] = collection.find_one({
+			"person1_id": connection.person1_id,
+			"person2_id": connection.person2_id
+		})
+		
+		if data is None:
+			data = collection.find_one({
+				"person1_id": connection.person2_id,
+				"person2_id": connection.person1_id
+			})
+		
+		if data is not None:
+			collection.delete_one({"_id": data["_id"]})
+	
+	@staticmethod
 	def get_connections(person_id: str) -> List[Connection]:
 		collection = Database._database.get_collection("connections")
 		c1 = collection.find({"person1_id": person_id})

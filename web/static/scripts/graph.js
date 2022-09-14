@@ -81,6 +81,14 @@ class Graph {
 		}
 	}
 
+	removeLink(node1Id, node2Id) {
+		if (!this.hasLink(node1Id, node2Id)) {
+			const linkId = Graph.getLinkId(node1Id, node2Id);
+			delete this.links[linkId];
+			this.update();
+		}
+	}
+
 	static getLinkId(node1Id, node2Id) {
 		return parseInt(node1Id, 10) + parseInt(node2Id, 10);
 	}

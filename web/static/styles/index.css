@@ -166,6 +166,13 @@ body, div::-webkit-scrollbar-thumb {
 	background-color: #fffa;
 }
 
+.button-styled-mini {
+	border: none;
+}
+.button-styled-mini:active {
+	background-color: #fffa;
+}
+
 .homies-list-label {
 	display: inline-block;
 	margin-top: 30px;
@@ -175,7 +182,8 @@ body, div::-webkit-scrollbar-thumb {
 }
 
 .homie-info {
-	margin-top: 5px;
+	margin-top: 10px;
+	margin-bottom: 15px;
 }
 
 @media (min-width: 768px) {

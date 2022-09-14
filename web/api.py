@@ -44,20 +44,47 @@ def set_connection() -> Response:
 	if data is None:
 		return Response(status=400)
 	
-	homie = Database.get_person(data["homieId"])
-	
-	if homie is None:
-		return Response("This person does not exist.", status=400)
-	
 	jwt = decode_jwt(jwt_str, options={"verify_signature": False})
 	
 	if jwt["sub"] == data["homieId"]:
 		return Response("You can't add yourself.", status=400)
 	
+	homie = Database.get_person(data["homieId"])
+	
+	if homie is None:
+		return Response("This person does not exist.", status=400)
+	
 	connection = Connection(jwt["sub"], data["homieId"], data["closeness"])
 	Database.set_connection(connection)
 	
 	return jsonify(connection.toJSON())
+
+
+def remove_connection() -> Response:
+	jwt_str: Optional[str] = request.cookies.get("jwt")
+	
+	if jwt_str is None:
+		return Response(status=401)
+	
+	data = request.get_json()
+	
+	if data is None:
+		return Response(status=400)
+	
+	jwt = decode_jwt(jwt_str, options={"verify_signature": False})
+	
+	if jwt["sub"] == data["homieId"]:
+		return Response("You can't remove yourself.", status=400)
+	
+	homie = Database.get_person(data["homieId"])
+	
+	if homie is None:
+		return Response("This person does not exist.", status=400)
+	
+	connection = Connection(jwt["sub"], data["homieId"], 0)
+	Database.remove_connection(connection)
+	
+	return Response("Homie successfully removed.", status=200)
 
 
 def get_connections(person_id: str) -> Response:
@@ -78,6 +105,10 @@ def create_api(app: Flask) -> None:
 	app.add_url_rule(
 		"/api/setConnection", "set_connection",
 		methods=["PUT"], view_func=set_connection
+	)
+	app.add_url_rule(
+		"/api/removeConnection", "remove_connection",
+		methods=["DELETE"], view_func=remove_connection
 	)
 	app.add_url_rule(
 		"/api/<string:person_id>/connections", "get_connections",
