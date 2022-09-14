@@ -95,18 +95,10 @@ class UserManager {
 	}
 
 	static async #addHomieToDOM(connection) {
-		const user = UserManager.getUser();
-		let homieId = null;
-
-		if (connection.person1_id === user.id) {
-			homieId = connection.person2_id;
-		} else {
-			homieId = connection.person1_id;
-		}
-
+		const homieId = UserManager.getConnectionPerson2(connection);
+		const homie = await API.getPerson(homieId);
 		const homiesListElem = document.querySelector(".homies-list");
 		const elemContainer = document.createElement("div");
-		const homie = await API.getPerson(homieId);
 
 		elemContainer.innerHTML = `<div class="homie-info">
 			<div>
@@ -155,7 +147,7 @@ class UserManager {
 		let message = "";
 		let connectionData = null;
 
-		if (UserManager.#user.id === null) {
+		if (UserManager.getUser().id === null) {
 			message = "Please login first.";
 		} else {
 			const res = await API.addConnection(personId);
@@ -178,7 +170,21 @@ class UserManager {
 			}
 		}
 
-		return message;
+		const homieId = UserManager.getConnectionPerson2(connectionData);
+		return {
+			message,
+			"homieData": await API.getPerson(homieId)
+		};
+	}
+
+	static getConnectionPerson2(connection, peson1Id = null) {
+		const id = peson1Id || UserManager.getUser().id;
+
+		if (connection.person1_id === id) {
+			return connection.person2_id;
+		}
+
+		return connection.person1_id;
 	}
 }
 
