@@ -152,7 +152,7 @@ body, div::-webkit-scrollbar-thumb {
 	border-radius: 15px;
 }
 
-.add-homie-form > button {
+.button-styled {
 	position: relative;
 	left: 50%;
 	transform: translateX(-50%);
@@ -162,7 +162,7 @@ body, div::-webkit-scrollbar-thumb {
 	border-radius: 15px;
 	padding: 5px 10px;
 }
-.add-homie-form > button:active {
+.button-styled:active {
 	background-color: #fffa;
 }
 

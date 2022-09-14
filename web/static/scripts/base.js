@@ -170,10 +170,11 @@ class UserManager {
 			}
 		}
 
-		const homieId = UserManager.getConnectionPerson2(connectionData);
 		return {
 			message,
-			"homieData": await API.getPerson(homieId)
+			"homieData": connectionData
+				? await API.getPerson(UserManager.getConnectionPerson2(connectionData))
+				: null
 		};
 	}
 
