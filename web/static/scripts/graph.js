@@ -31,7 +31,7 @@ class Graph {
 	hasLink(node1Id, node2Id) {
 		const linkId = Graph.getLinkId(node1Id, node2Id);
 
-		for (const key in this.links) {
+		for (const key of Object.keys(this.links)) {
 			if (key === linkId) {
 				return true;
 			}
@@ -90,7 +90,7 @@ class Graph {
 	}
 
 	static getLinkId(node1Id, node2Id) {
-		return parseInt(node1Id, 10) + parseInt(node2Id, 10);
+		return [node1Id, node2Id].sort().join("-");
 	}
 }
 

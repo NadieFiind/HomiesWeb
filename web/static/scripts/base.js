@@ -1,6 +1,13 @@
 /* global Universe */
 /* eslint-disable func-style, no-unused-vars */
 
+/** For debugging. */
+function slowdown(seconds = 0.5) {
+	const start = new Date().getTime();
+	// eslint-disable-next-line no-empty
+	while (new Date().getTime() - start < seconds * 1000) {}
+}
+
 let popupMessageTimeout = null;
 function popupMessage(message) {
 	const elem = document.querySelector(".popup-message");
