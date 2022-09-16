@@ -1,3 +1,4 @@
+from data import Database
 from web.api import create_api
 from flask import Flask, render_template
 
@@ -7,4 +8,4 @@ create_api(app)
 
 @app.route("/")
 def home() -> str:
-	return render_template("index.html")
+	return render_template("index.html", total_users=Database.get_people_count())
