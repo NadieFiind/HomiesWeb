@@ -12,7 +12,7 @@
 {% block body %}
 <div
 	id="g_id_onload"
-	data-client_id="839918008863-3epf75evpkjl2icbthhvtfh8j73bjht7.apps.googleusercontent.com"
+	data-client_id="{{ GOOGLE_OAUTH_CLIENT_ID }}"
 	data-callback="setGoogleUser"
 	data-auto_prompt="false"
 ></div>
@@ -29,7 +29,7 @@
 <div class="floaty popup-message"></div>
 
 <span class="total-users-count">
-	Total Users: {{ total_users }}
+	Total Users: {{ TOTAL_USERS }}
 </span>
 
 <div class="floaty user-info-panel toggable panel">

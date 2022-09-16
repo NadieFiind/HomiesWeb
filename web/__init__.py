@@ -1,3 +1,4 @@
+import os
 from data import Database
 from web.api import create_api
 from flask import Flask, render_template
@@ -8,4 +9,8 @@ create_api(app)
 
 @app.route("/")
 def home() -> str:
-	return render_template("index.html", total_users=Database.get_people_count())
+	return render_template(
+		"index.html",
+		TOTAL_USERS=Database.get_people_count(),
+		GOOGLE_OAUTH_CLIENT_ID=os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+	)
