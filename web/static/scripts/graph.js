@@ -116,6 +116,7 @@ class Universe {
 
 			Universe.graph.addNode(user.id, user.data.name);
 			Universe.expand(user.id, 1);
+			document.querySelector(".login-msg").style.display = "none";
 		}
 	}
 
