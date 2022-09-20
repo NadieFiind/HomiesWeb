@@ -25,7 +25,8 @@ class Database:
 		if data is None:
 			return None
 		
-		return Person(data["name"])
+		homies_count = Database.get_connections_count(person_id)
+		return Person(data["name"], homies_count=homies_count)
 	
 	@staticmethod
 	def set_person(person_id: str, data: Person) -> None:
@@ -97,3 +98,10 @@ class Database:
 			))
 		
 		return connections
+	
+	@staticmethod
+	def get_connections_count(person_id: str) -> int:
+		collection = Database._database.get_collection("connections")
+		c1 = collection.count_documents({"person1_id": person_id})
+		c2 = collection.count_documents({"person2_id": person_id})
+		return c1 + c2

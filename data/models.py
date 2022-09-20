@@ -16,8 +16,12 @@ class Connection:
 
 
 class Person:
-	def __init__(self, name: str) -> None:
+	def __init__(self, name: str, *, homies_count: int = 0) -> None:
 		self.name = name
+		self.homies_count = homies_count
 	
 	def toJSON(self) -> Dict[str, Any]:
-		return {"name": self.name}
+		return {
+			"name": self.name,
+			"homies_count": self.homies_count
+		}

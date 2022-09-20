@@ -40,23 +40,23 @@ class Graph {
 		return false;
 	}
 
-	addNode(id, name) {
+	addNode(id, name, size) {
 		if (!this.hasNode(id)) {
 			this.nodes[id] = {
 				id,
 				name,
-				"val": 1,
+				"val": size,
 				"color": "green"
 			};
 			this.update();
 		}
 	}
 
-	addNodeWithLink(id, name, targetId, color = "white") {
+	addNodeWithLink(id, name, size, targetId, color = "white") {
 		const node = {
 			id,
 			name,
-			"val": 1
+			"val": size
 		};
 		const link = {
 			"source": id,
@@ -114,7 +114,7 @@ class Universe {
 				Universe.stopExpansion = true;
 			}
 
-			Universe.graph.addNode(user.id, user.data.name);
+			Universe.graph.addNode(user.id, user.data.name, user.data.homies_count);
 			Universe.expand(user.id, 1);
 			document.querySelector(".login-msg").style.display = "none";
 		}
@@ -137,7 +137,7 @@ class Universe {
 		for (const connection of connections) {
 			const cid = UserManager.getConnectionPerson2(connection, personId);
 			const cperson = await API.getPerson(cid);
-			Universe.graph.addNodeWithLink(cid, cperson.name, personId);
+			Universe.graph.addNodeWithLink(cid, cperson.name, cperson.homies_count, personId);
 
 			if (Universe.graph.nodes.length >= Universe.maxPopulation) {
 				Universe.stopExpansion = true;

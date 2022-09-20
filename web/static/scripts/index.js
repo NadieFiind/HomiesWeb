@@ -49,6 +49,7 @@ addHomieForm.querySelector("button").addEventListener("click", async () => {
 		Universe.graph.addNodeWithLink(
 			personId,
 			res.homieData.name,
+			res.homieData.homies_count,
 			UserManager.getUser().id,
 			"yellow"
 		);
