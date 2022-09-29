@@ -101,6 +101,7 @@ class UserManager {
 			UserManager.setUser(user.id, user.data);
 		}
 
+		document.querySelector(".homies-list-label").textContent += ` (${user.data.homies_count})`;
 		UserManager.loadHomies();
 	}
 
