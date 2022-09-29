@@ -1,11 +1,13 @@
 import os
 from pymongo import MongoClient
+from data.cache import DatabaseCache
 from data.models import Person, Connection
 from typing import Optional, Dict, Any, List, Union
 
 
 class Database:
 	client = MongoClient(os.getenv("MONGODB_URI"))  # type: ignore[var-annotated]
+	_cache = DatabaseCache()
 	_database = client.get_database("HomiesWebDB")
 	_people_count: Union[None, int] = None
 	
@@ -19,6 +21,10 @@ class Database:
 	
 	@staticmethod
 	def get_person(person_id: str) -> Optional[Person]:
+		person = Database._cache.get_person(person_id)
+		if person is not None:
+			return person
+		
 		collection = Database._database.get_collection("people")
 		data = collection.find_one(person_id)
 		
@@ -26,10 +32,15 @@ class Database:
 			return None
 		
 		homies_count = Database.get_connections_count(person_id)
-		return Person(data["name"], homies_count=homies_count)
+		return Database._cache.set_person(
+			person_id,
+			Person(data["name"], homies_count=homies_count)
+		)
 	
 	@staticmethod
 	def set_person(person_id: str, data: Person) -> None:
+		Database._cache.set_person(person_id, data)
+		
 		collection = Database._database.get_collection("people")
 		doc: Optional[Dict[str, Any]] = collection.find_one_and_replace(
 			{"_id": person_id}, data.toJSON(), upsert=True
