@@ -40,19 +40,19 @@ class Graph {
 		return false;
 	}
 
-	addNode(id, name, size) {
+	addNode(id, name, size, color = "green") {
 		if (!this.hasNode(id)) {
 			this.nodes[id] = {
 				id,
 				name,
-				"val": size,
-				"color": "green"
+				color,
+				"val": size
 			};
 			this.update();
 		}
 	}
 
-	addNodeWithLink(id, name, size, targetId, color = "white") {
+	addNodeWithLink(id, name, size, targetId, linkColor = "white") {
 		const node = {
 			id,
 			name,
@@ -61,7 +61,7 @@ class Graph {
 		const link = {
 			"source": id,
 			"target": targetId,
-			color
+			"color": linkColor
 		};
 		const linkId = Graph.getLinkId(id, targetId);
 		let updateGraph = false;
@@ -82,7 +82,7 @@ class Graph {
 	}
 
 	removeLink(node1Id, node2Id) {
-		if (!this.hasLink(node1Id, node2Id)) {
+		if (this.hasLink(node1Id, node2Id)) {
 			const linkId = Graph.getLinkId(node1Id, node2Id);
 			delete this.links[linkId];
 			this.update();

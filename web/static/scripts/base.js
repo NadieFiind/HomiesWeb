@@ -211,8 +211,8 @@ class UserManager {
 
 		if (connectionData !== null) {
 			const index = UserManager.connections.findIndex((c1) => {
-				const c1Id = parseInt(c1.person1_id, 10) + parseInt(c1.person2_id, 10);
-				const c2Id = parseInt(connectionData.person1_id, 10) + parseInt(connectionData.person2_id, 10);
+				const c1Id = Graph.getLinkId(c1.person1_id, c1.person2_id);
+				const c2Id = Graph.getLinkId(connectionData.person1_id, connectionData.person2_id);
 				return c1Id === c2Id;
 			});
 
@@ -241,8 +241,8 @@ class UserManager {
 
 		if (message === "Homie successfully removed.") {
 			const index = UserManager.connections.findIndex((c1) => {
-				const c1Id = parseInt(c1.person1_id, 10) + parseInt(c1.person2_id, 10);
-				const c2Id = parseInt(UserManager.getUser().id, 10) + parseInt(personId, 10);
+				const c1Id = Graph.getLinkId(c1.person1_id, c1.person2_id);
+				const c2Id = Graph.getLinkId(UserManager.getUser().id, personId);
 				return c1Id === c2Id;
 			});
 
