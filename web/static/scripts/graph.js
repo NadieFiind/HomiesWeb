@@ -9,6 +9,7 @@ class Graph {
 			width(this.container.clientWidth).
 			height(this.container.clientHeight).
 			backgroundColor("#18181b").
+			nodeAutoColorBy("val").
 			onNodeClick(onNodeClick);
 	}
 
@@ -40,7 +41,7 @@ class Graph {
 		return false;
 	}
 
-	addNode(id, name, size, color = "green") {
+	addNode(id, name, size, color = "white") {
 		if (!this.hasNode(id)) {
 			this.nodes[id] = {
 				id,
