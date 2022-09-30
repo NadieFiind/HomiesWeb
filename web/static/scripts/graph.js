@@ -10,6 +10,7 @@ class Graph {
 			height(this.container.clientHeight).
 			backgroundColor("#18181b").
 			nodeAutoColorBy("val").
+			nodeRelSize(2).
 			onNodeClick(onNodeClick);
 	}
 
@@ -116,7 +117,7 @@ class Universe {
 			}
 
 			Universe.graph.addNode(user.id, user.data.name, user.data.homies_count);
-			Universe.expand(user.id, 1);
+			Universe.expand(user.id, 10);
 			document.querySelector(".login-msg").style.display = "none";
 		}
 	}

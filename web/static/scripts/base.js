@@ -99,9 +99,9 @@ class UserManager {
 			// eslint-disable-next-line require-atomic-updates
 			UserManager.connections = await API.getConnections(user.id);
 			UserManager.setUser(user.id, user.data);
+			document.querySelector(".homies-list-label").textContent += ` (${user.data.homies_count})`;
 		}
 
-		document.querySelector(".homies-list-label").textContent += ` (${user.data.homies_count})`;
 		UserManager.loadHomies();
 	}
 
