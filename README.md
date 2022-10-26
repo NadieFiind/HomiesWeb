@@ -1,7 +1,5 @@
 # Homies Web
-Description here
-
-> Add me `100332899133648192870`.
+Add me `100332899133648192870`.
 
 ## Run the Project
 - Setup your [MongoDB](https://www.mongodb.com/) database.
