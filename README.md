@@ -3,9 +3,9 @@ Homies Web is a visualization of a network of people. Each circle or node is a u
 
 You can join the network by logging in using your Google account and adding friends using their UID. You can also click on a node to add them if you find any.
 
-Add me using my UID: `100332899133648192870`.
+Add me using my UID: `100332899133648192870`
 
-## Run the Project
+## Run the Project on Your Local Machine
 - Setup your [MongoDB](https://www.mongodb.com/) database.
 - Create your app on [Google Cloud](https://console.cloud.google.com/).
 - Create a `.env` file. See [.env.example](.env.example).
