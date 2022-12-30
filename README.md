@@ -1,4 +1,6 @@
 # Homies Web
+![Screenshot from 2022-12-30 15-25-10](https://user-images.githubusercontent.com/71211706/210046257-8381cd76-8c14-4408-aade-83ef5d938bf3.png)
+
 Homies Web is a visualization of a network of people. Each circle or node is a user. Users that are connected together are "friends" or "homies". You can see the many connections made by different people.
 
 You can join the network by logging in using your Google account and adding friends using their UID. You can also click on a node to add them if you find any.
